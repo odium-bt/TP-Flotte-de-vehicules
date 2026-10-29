@@ -1,5 +1,9 @@
 package dao;
 
+import modeles.Vehicule;
+
+import java.util.List;
+
 public interface VehiculeDAO {
     void creer(Vehicule vehicule); // renseigne l'id généré
 
