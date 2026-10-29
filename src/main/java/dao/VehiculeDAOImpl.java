@@ -1,9 +1,12 @@
 package dao;
 
+import modeles.Vehicule;
+
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +41,7 @@ public class VehiculeDAOImpl implements VehiculeDAO {
             ps.setString(2, vehicule.getImmatriculation());
             ps.setString(3, vehicule.getMarque());
             ps.setString(4, vehicule.getModele());
-            ps.setDate(5, vehicule.getDate());
+            ps.setDate(5, Date.valueOf(vehicule.getDateMiseEnCirculation()));
             ps.setInt(6, vehicule.getKilometrage());
 
             ps.executeQuery();
@@ -55,7 +58,7 @@ public class VehiculeDAOImpl implements VehiculeDAO {
      */
     @Override
     public Vehicule trouverParId(int id) {
-        String query = "select * from " + table + " where " + code + "=?";
+        String query = "select * from " + table + " where " + this.id + "=?";
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
             ps.setInt(1, id);
 
@@ -67,7 +70,7 @@ public class VehiculeDAOImpl implements VehiculeDAO {
                 String immatriculation = rs.getString(this.immatriculation);
                 String marque = rs.getString(this.marque);
                 String modele = rs.getString(this.modele);
-                Date date_mise_circulation = rs.getDate(this.date_mise_circulation);
+                LocalDate date_mise_circulation = rs.getDate(this.date_mise_circulation).toLocalDate();
                 int kilometrage = rs.getInt(this.kilometrage);
 
                 v = new Vehicule(code, immatriculation, marque, modele, date_mise_circulation, kilometrage);
@@ -77,7 +80,6 @@ public class VehiculeDAOImpl implements VehiculeDAO {
         } catch (SQLException e) {
             throw new DAOException("Erreur lors de la recherche du véhicule");
         }
-        return null;
     }
 
     /**
@@ -100,7 +102,7 @@ public class VehiculeDAOImpl implements VehiculeDAO {
                 String immatriculation = rs.getString(this.immatriculation);
                 String marque = rs.getString(this.marque);
                 String modele = rs.getString(this.modele);
-                Date date_mise_circulation = rs.getDate(this.date_mise_circulation);
+                LocalDate date_mise_circulation = rs.getDate(this.date_mise_circulation).toLocalDate();
                 int kilometrage = rs.getInt(this.kilometrage);
 
                 v = new Vehicule(code, immatriculation, marque, modele, date_mise_circulation, kilometrage);
@@ -110,7 +112,6 @@ public class VehiculeDAOImpl implements VehiculeDAO {
         } catch (SQLException e) {
             throw new DAOException("Erreur lors de la recherche du véhicule");
         }
-        return null;
     }
 
     /**
@@ -131,14 +132,14 @@ public class VehiculeDAOImpl implements VehiculeDAO {
                 String immatriculation = rs.getString(this.immatriculation);
                 String marque = rs.getString(this.marque);
                 String modele = rs.getString(this.modele);
-                Date date_mise_circulation = rs.getDate(this.date_mise_circulation);
+                LocalDate date_mise_circulation = rs.getDate(this.date_mise_circulation).toLocalDate();
                 int kilometrage = rs.getInt(this.kilometrage);
 
-                Vehicule v = new Vehicule(id, immatriculation, marque, date_mise_circulation);
+                Vehicule v = new Vehicule(id, immatriculation, marque, modele, date_mise_circulation, kilometrage);
                 vehicules.add(v);
             }
 
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             throw new DAOException("Erreur lors de la recherche des véhicules");
         }
 
@@ -159,15 +160,15 @@ public class VehiculeDAOImpl implements VehiculeDAO {
                 + date_mise_circulation + "=?"
                 + " WHERE " + id + "=?";
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
-            ps.setString(1, p.getImmatriculation());
-            ps.setString(2, p.getMarque());
-            ps.setString(3, p.getModele());
-            ps.setDate(4, p.getDate());
+            ps.setString(1, vehicule.getImmatriculation());
+            ps.setString(2, vehicule.getMarque());
+            ps.setString(3, vehicule.getModele());
+            ps.setDate(4, Date.valueOf(vehicule.getDateMiseEnCirculation()));
 
-            ps.setInt(5, p.getCode());
+            ps.setInt(5, vehicule.getId());
 
             ps.executeUpdate();
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             throw new DAOException("Erreur lors de la modification du véhicule");
         }
     }
