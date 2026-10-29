@@ -29,7 +29,7 @@ public class VehiculeService {
     }
 
     /**
-     * Récupère chaque véhicule de la flotte sous forme de string
+     * Récupère chaque véhicule de la flotte sous forme de string.
      *
      * @return Retourne une {@code List<String>} contenant chaque véhicule sous forme de string
      */
@@ -43,13 +43,12 @@ public class VehiculeService {
         return res;
     }
 
+    public void rechercheParImmatriculation(String immatriculation) {
+    }
+
     public void retirerVehicule(int id) {
         // TODO Chercher si le véhicule est actuellement utilisé dans une réservation
         //      Sinon le supprimer
-
-    }
-
-    public void rechercheParImmatriculation(String immatriculation) {
     }
 
     public void trierMarque() {
