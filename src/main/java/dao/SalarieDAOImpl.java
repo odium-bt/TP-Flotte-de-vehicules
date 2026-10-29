@@ -38,9 +38,9 @@ public class SalarieDAOImpl implements SalarieDAO {
     }
 
     /**
-     * Cherche un salarié dans la base de données selon sa matricule.
+     * Cherche un salarié dans la base de données selon son matricule.
      *
-     * @param matricule La matricule du salarié
+     * @param matricule Le matricule du salarié
      * @return Un objet {@code Salarie}, ou {@code null} si le salarié n'a pas été trouvé
      */
     @Override
@@ -96,7 +96,7 @@ public class SalarieDAOImpl implements SalarieDAO {
     }
 
     /**
-     * Modifie le salarié dans la base de donnée possédant la même matricule que l'objet fourni.
+     * Modifie le salarié dans la base de donnée possédant le même matricule que l'objet fourni.
      *
      * @param salarie L'objet salarié modifié
      */
@@ -119,7 +119,7 @@ public class SalarieDAOImpl implements SalarieDAO {
     }
 
     /**
-     * Supprime le salarié selon la matricule fournie.
+     * Supprime le salarié selon le matricule fourni.
      *
      * @param matricule Matricule du salarié
      */
