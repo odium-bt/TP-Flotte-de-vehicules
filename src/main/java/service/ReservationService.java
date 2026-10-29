@@ -9,6 +9,11 @@ import org.apache.logging.log4j.LogManager;
 
 import java.sql.Timestamp;
 
+import modeles.Salarie;
+import modeles.Reservations;
+import java.util.List;
+import java.util.ArrayList;
+
 
 public class ReservationService {
     private final Logger log = LogManager.getLogger(String.valueOf(ReservationService.class));
@@ -38,5 +43,21 @@ public class ReservationService {
         vehiculeDAO.modifier(v);
 
         log.info("Retour de {} à {} km", immatriculation, kmRetour);
+    }
+
+    public void ajouterSalarie(Salarie salarie) {
+        // TODO Zadig
+    }
+
+    public void enregistrerDepart(String immatriculation, String matricule) {
+        // TODO Zadig
+    }
+
+    public Reservations<Salarie, Timestamp, Vehicule> historiqueSalarie(String matricule) {
+        return null;
+    }
+
+    public List<Vehicule> vehiculeEnDeplacement() {
+        return new ArrayList<>();
     }
 }
