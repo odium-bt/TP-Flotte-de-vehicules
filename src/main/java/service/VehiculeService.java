@@ -1,6 +1,9 @@
 package service;
 
+import dao.ReservationDAO;
 import dao.VehiculeDAO;
+import modeles.Flotte;
+import modeles.Vehicule;
 
 import java.util.Comparator;
 
@@ -44,7 +47,7 @@ public class VehiculeService {
 
     public void trierDate() {
         Comparator<Vehicule> parDate =
-                Comparator.comparing(Vehicule::getDateMiseCirculation);
+                Comparator.comparing(Vehicule::getDateMiseEnCirculation);
     }
 
     public void trierKilometrageDecroissant() {
