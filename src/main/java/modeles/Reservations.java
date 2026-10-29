@@ -2,9 +2,12 @@ package modeles;
 
 import java.util.HashMap;
 
+// Classe générique
 public class Reservations<S, K, V>{
 
     private S salarie;
+    // HashMap contenant Le TimeStamp et le véhicule, formant à
+    // la suite, la clé(K) et la valeur(K)
     private HashMap<K, V> listeReservations;
 
     public Reservations(S salarie) {
