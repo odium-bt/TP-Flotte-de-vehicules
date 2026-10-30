@@ -43,6 +43,7 @@ public class AuthService {
             }
         } catch (JacksonException e) {
             log.error("Impossible de lire les contenus de {}", userFilePath);
+            log.trace(e.getStackTrace());
         }
         return -1;
     }
