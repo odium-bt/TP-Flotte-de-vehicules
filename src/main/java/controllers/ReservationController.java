@@ -30,9 +30,7 @@ public class ReservationController {
             Salarie salarie = new Salarie(matricule, prenom, nom);
             reservationService.ajouterSalarie(salarie);
             vue.afficherSucces("Le salarié matriculé " + matricule + " a bien été ajouté!");
-        } catch (RegleGestionException e) {
-            vue.afficherRefus(e.getMessage());
-        } catch (IllegalArgumentException e) {
+        } catch (RegleGestionException | IllegalArgumentException e) {
             vue.afficherRefus(e.getMessage());
         }
     }
