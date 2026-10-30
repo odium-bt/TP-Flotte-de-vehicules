@@ -83,6 +83,12 @@ public class VehiculeService {
         }
     }
 
+    /**
+     * Cherche un véhicule par son immatriculation.
+     *
+     * @param immatriculation L'immatriculation du véhicule
+     * @return {@code Vehicule}
+     */
     public Vehicule rechercheParImmatriculation(String immatriculation) {
         log.info("Recherche du véhicule immatriculé {}", immatriculation);
         try {
@@ -182,28 +188,53 @@ public class VehiculeService {
         });
     }
 
+    /**
+     * Trie les véhicules par marque puis par modèle.
+     *
+     * @return {@code List<Vehicule>}
+     */
     public List<Vehicule> trierMarque() {
         Comparator<Vehicule> parMarqueModele = Comparator.comparing(Vehicule::getMarque)
                 .thenComparing(Vehicule::getModele);
-        return null;
+
+        return vehiculeDAO.lister().stream().sorted(parMarqueModele).toList();
     }
 
-    public void trierModele() {
+    /**
+     * Trie les véhicules par modèle puis par marque.
+     *
+     * @return {@code List<Vehicule>}
+     */
+    public List<Vehicule> trierModele() {
         Comparator<Vehicule> parModeleMarque = Comparator.comparing(Vehicule::getModele)
                 .thenComparing(Vehicule::getMarque);
+
+        return vehiculeDAO.lister().stream().sorted(parModeleMarque).toList();
     }
 
+    /**
+     * Trie les véhicules par date de mise en circulation.
+     *
+     * @return {@code List<Vehicule>}
+     */
     public List<Vehicule> trierDate() {
         Comparator<Vehicule> parDate =
                 Comparator.comparing(Vehicule::getDateMiseEnCirculation);
-        return null;
+
+        return vehiculeDAO.lister().stream().sorted(parDate).toList();
     }
 
+    /**
+     * Trie les véhicules par kilométrage décroissant.
+     *
+     * @return {@code List<Vehicule>}
+     */
     public List<Vehicule> trierKilometrageDecroissant() {
         Comparator<Vehicule> parKmDecroissant =
                 Comparator.comparingInt(Vehicule::getKilometrage)
                         .reversed();
-        return null;
+
+        return vehiculeDAO.lister().stream().sorted(parKmDecroissant).toList();
     }
 
     /**
