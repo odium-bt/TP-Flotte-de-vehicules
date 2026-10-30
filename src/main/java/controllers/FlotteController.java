@@ -95,6 +95,7 @@ public class FlotteController {
                 break;
             case 3:
                 vue.afficherVehicules(vehiculeEnService.trierKilometrageDecroissant());
+                break;
             default:
                 vue.afficherRefus("Choix de tri non reconnu");
         }

@@ -63,11 +63,6 @@ public class ReservationController {
         }
     }
 
-    public Reservations<Salarie, Timestamp, Vehicule> historiqueSalarie(String matricule) {
-
-        return reservationService.historiqueSalarie(matricule);
-    }
-
     public void vehiculeEnDeplacement() {
 
         vue.afficherVehicules(reservationService.vehiculeEnDeplacement());
@@ -75,11 +70,11 @@ public class ReservationController {
 
 
     public void historiqueSalarie() {
-        String matricule = vue.saisirTexte("Matricule");
+        String matricule = vue.saisieTexte("Matricule : ");
         Reservations<Salarie, Timestamp, Vehicule> historique = reservationService.historiqueSalarie(matricule);
 
         if (historique == null) {
-            vue.afficherRefus("salarié introuvable.");
+            vue.afficherRefus("Le salarié est introuvable.");
         } else {
             vue.afficherHistorique(historique);
         }
