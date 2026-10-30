@@ -7,14 +7,16 @@ import modeles.Salarie;
 import modeles.Vehicule;
 import tools.jackson.databind.ext.javatime.DateTimeParseException;
 
+import javax.lang.model.type.ArrayType;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Scanner;
 
 public class MenuConsole {
 
-    public static Scanner scanner = new Scanner(System.in);
+    public final Scanner scanner = new Scanner(System.in);
 
     private final FlotteController flotteController;
     private final ReservationController reservationController;
@@ -25,7 +27,7 @@ public class MenuConsole {
         this.reservationController = reservationController;
     }
 
-    public void afficherMenu() {
+    public int afficherMenuEtLireChoix() {
         System.out.println("=============== Menu Principal ===============");
         System.out.println("VÉHICULES");
         System.out.println("1. Afficher la flotte");
@@ -46,69 +48,52 @@ public class MenuConsole {
         System.out.println("0. Quitter");
         System.out.println("===============================================");
         System.out.print("Votre choix : ");
+
+        return saisieEntier("Votre choix");
     }
 
-    public void selection() {
+    public String saisieTexte(String libelle) {
 
-        int choix = -1;
+        System.out.print(libelle + " : ");
+        return scanner.nextLine().trim();
+    }
 
-        while (choix != 0) {
+    public int saisieEntier(String libelle) {
 
-            afficherMenu();
-            choix = scanner.nextInt();
-            scanner.nextLine();
-
-            switch (choix) {
-                case 1:
-                    afficherFlotte();
-                    break;
-                case 2:
-                    ajouterVehicule();
-                    break;
-                case 3:
-                    retirerVehicule();
-                    break;
-                case 4:
-                    rechercherVehicule();
-                    break;
-                case 5:
-                    trierFlotte();
-                    break;
-                case 6:
-                    creerSalarie();
-                    break;
-                case 7:
-                    enregistrerDepart();
-                    break;
-                case 8:
-                    enregistrerRetour();
-                    break;
-                case 9:
-                    vehiculesEnDeplacement();
-                    break;
-                case 10:
-                    // TODO
-                    break;
-                case 11:
-                    // TODO
-                    break;
-                case 12:
-                    // TODO
-                    break;
-                case 13:
-                    // TODO
-                    break;
-                case 0:
-                    // TODO
-                    break;
-                default:
-                    System.out.println("Choix invalide!");
+        while (true) {
+            try {
+                return Integer.parseInt(saisieTexte(libelle));
+            } catch (NumberFormatException e) {
+                System.out.println("Veuillez saisir un nombre.");
             }
         }
     }
 
+    public void afficherVehicules(List<Vehicule> vehicules) {
+
+        for (Vehicule vehicule : vehicules) {
+            System.out.println(vehicule);
+        }
+    }
+
+    public void afficherHistorique(Reservations<Salarie, Timestamp, Vehicule> historique) {
+        System.out.println("Historique du salarié : " + historique.getSalarie());
+        for (Timestamp dateDepart : historique.getListeReservations().keySet()) {
+            System.out.println(dateDepart + " : " + historique.getListeReservations().get(dateDepart));
+        }
+    }
+
+    public void afficherSucces(String message) {
+        System.out.println(message);
+    }
+
+    public void afficherRefus(String message) {
+        System.out.println("Refusé : " + message);
+    }
+
 
     // Méthodes appelées dans le switch du menu
+    /*-------------------------------------------------*/
 
     private void afficherFlotte() {
         for (Vehicule vehicule : flotteController.afficherFlotte()) {

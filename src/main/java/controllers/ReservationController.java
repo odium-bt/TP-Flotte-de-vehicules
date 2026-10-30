@@ -5,6 +5,7 @@ import modeles.Salarie;
 import modeles.Vehicule;
 import service.RegleGestionException;
 import service.ReservationService;
+import vue.MenuConsole;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -12,47 +13,53 @@ import java.util.List;
 public class ReservationController {
 
     private ReservationService reservationService;
+    private MenuConsole vue;
 
-    public ReservationController(ReservationService reservationService) {
+    public ReservationController(ReservationService reservationService, MenuConsole vue) {
 
         this.reservationService = reservationService;
+        this.vue = vue;
     }
 
-    public String ajouterSalarie(String matricule, String prenom, String nom) {
+    public void ajouterSalarie() {
 
+        String matricule = vue.saisieTexte("Matricule (6 chiffres) : ");
+        String nom = vue.saisieTexte("Nom : ");
+        String prenom = vue.saisieTexte("Prénom : ");
         try {
-
             Salarie salarie = new Salarie(matricule, prenom, nom);
-            // TODO Mettre le vrai nom de méthode et lever
-            // exception si le matricule existe déjà
-            //
             reservationService.ajouterSalarie(salarie);
-            return "Le salarié matriculé " + matricule + " a bien été ajouté!";
-
+            vue.afficherSucces("Le salarié matriculé " + matricule + " a bien été ajouté!");
         } catch (RegleGestionException e) {
-            return "Refusé : " + e.getMessage();
+            vue.afficherRefus(e.getMessage());
         } catch (IllegalArgumentException e) {
-            return "Refusé : " + e.getMessage();
+            vue.afficherRefus(e.getMessage());
         }
     }
 
-    public String departReservation(String immatricule, String matricule) {
+    public void departReservation() {
+
+        String matricule = vue.saisieTexte("Matricule du salarié : ");
+        String immatricule = vue.saisieTexte("Immatriculation : ").toUpperCase();
 
         try {
             reservationService.enregistrerDepart(immatricule, matricule);
-            return "Le départ a été enregistré";
+            vue.afficherSucces("La réservation a été validée avec succès");
         } catch (RegleGestionException e) {
-            return "Refusé : " + e.getMessage();
+            vue.afficherRefus(e.getMessage());
         }
     }
 
-    public String retourReservation(String immatriculation, int kilometrage) {
+    public void retourReservation() {
+
+        String immatriculation = vue.saisieTexte("Immatriculation : ").toUpperCase();
+        int kilometrage = vue.saisieEntier("Kilométrage au compteur : ");
 
         try {
             reservationService.enregistrerRetour(immatriculation, kilometrage);
-            return "Le retour a été enregistré";
+            vue.afficherSucces("Le retour a bien été enregistré.");
         } catch (RegleGestionException e) {
-            return "Refusé : " + e.getMessage();
+            vue.afficherRefus(e.getMessage());
         }
     }
 
@@ -61,8 +68,20 @@ public class ReservationController {
         return reservationService.historiqueSalarie(matricule);
     }
 
-    public List<Vehicule> vehiculeEnDeplacement() {
+    public void vehiculeEnDeplacement() {
 
-        return reservationService.vehiculeEnDeplacement();
+        vue.afficherVehicules(reservationService.vehiculeEnDeplacement());
+    }
+
+
+    public void historiqueSalarie() {
+        String matricule = vue.saisirTexte("Matricule");
+        Reservations<Salarie, Timestamp, Vehicule> historique = reservationService.historiqueSalarie(matricule);
+
+        if (historique == null) {
+            vue.afficherRefus("salarié introuvable.");
+        } else {
+            vue.afficherHistorique(historique);
+        }
     }
 }
