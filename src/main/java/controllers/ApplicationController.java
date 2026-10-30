@@ -4,6 +4,7 @@ import vue.MenuConsole;
 
 public class ApplicationController {
 
+    //
     private final MenuConsole vue;
     private final FlotteController flotteController;
     private final ReservationController reservationController;
@@ -41,19 +42,19 @@ public class ApplicationController {
                     flotteController.trierFlotte();
                     break;
                 case 6:
-                    creerSalarie();
+                    reservationController.ajouterSalarie();
                     break;
                 case 7:
-                    enregistrerDepart();
+                    reservationController.departReservation();
                     break;
                 case 8:
-                    enregistrerRetour();
+                    reservationController.retourReservation();
                     break;
                 case 9:
-                    vehiculesEnDeplacement();
+                    reservationController.vehiculeEnDeplacement();
                     break;
                 case 10:
-                    // TODO
+                    reservationController.historiqueSalarie();
                     break;
                 case 11:
                     // TODO

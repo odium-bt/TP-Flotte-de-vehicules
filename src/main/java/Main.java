@@ -1,25 +1,53 @@
-import controllers.FlotteController;
-import controllers.ReservationController;
+import controllers.*;
 import dao.DAOFactory;
+import dao.VehiculeDAOImpl;
 import modeles.Flotte;
+import service.AuthService;
 import service.ReservationService;
 import service.VehiculeService;
 import vue.MenuConsole;
 
 public class Main {
-    static void main(String[] args) {
+    public static void main(String[] args) {
 
         DAOFactory factory = DAOFactory.getInstance();
+        MenuConsole vue = new MenuConsole();
 
-        Flotte flotte = new Flotte();
+        VehiculeService vehiculeService = new VehiculeService(
+                factory.getVehiculeDAO(), factory.getReservationDAO(), new Flotte());
+        ReservationService reservationService = new ReservationService(
+                factory.getVehiculeDAO(), factory.getReservationDAO(), factory.getSalarieDAO());
 
-        ReservationService reservationService = new ReservationService(factory.getVehiculeDAO(), factory.getReservationDAO(), factory.getSalarieDAO());
+        FlotteController flotteController = new FlotteController(vehiculeService, vue);
+        ReservationController reservationController = new ReservationController(reservationService, vue);
+        EtatController etatController = new EtatController();
 
-        VehiculeService vehiculeService = new VehiculeService(factory.getVehiculeDAO(), factory.getReservationDAO(), flotte);
+        AuthController authController = new AuthController(new AuthService(), vue);
+        if (authController.connecter()) {
+            new ApplicationController(vue, flotteController, reservationController, etatController).demarrer();
+        }
 
-        ReservationController reservationController = new ReservationController(reservationService);
-        FlotteController flotteController = new FlotteController(vehiculeService);
-
-        new MenuConsole(flotteController, reservationController).demarrer();
+        vehiculeService.fermer();
+        reservationService.fermer();
     }
+
+    /*
+        public static void main(String[] args) {
+            MenuConsole vue = new MenuConsole();
+
+            VehiculeService vehiculeService = new VehiculeService(new VehiculeDAOImpl(), null, new Flotte());
+            ReservationService reservationService = new ReservationService(null, null, null);
+
+            FlotteController flotteController = new FlotteController(vehiculeService, vue);
+            ReservationController reservationController = new ReservationController(reservationService, vue);
+            EtatController etatController = new EtatController();
+
+            new ApplicationController(vue, flotteController, reservationController, etatController).demarrer();
+
+            vehiculeService.fermer();
+            reservationService.fermer();
+        }
+
+     */
+
 }
