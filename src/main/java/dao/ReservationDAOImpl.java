@@ -24,9 +24,7 @@ public class ReservationDAOImpl implements ReservationDAO {
 
 
     /**
-     * Création de nouvelles réservations dans la base de données.
-     *
-     * @param reservations Les réservations à créer
+     * {@inheritDoc}
      */
     @Override
     public void creer(Reservations<Salarie, Timestamp, Vehicule> reservations) throws DAOException {
@@ -54,10 +52,7 @@ public class ReservationDAOImpl implements ReservationDAO {
     }
 
     /**
-     * Cherche les réservations associées au salarié à qui appartient la matricule donnée
-     *
-     * @param matricule Le matricule du salarié
-     * @return Un objet Reservations contenant les réservations associées à un salarié
+     * {@inheritDoc}
      */
     @Override
     public Reservations<Salarie, Timestamp, Vehicule> trouverParMatricule(String matricule) throws DAOException {
@@ -95,9 +90,7 @@ public class ReservationDAOImpl implements ReservationDAO {
     }
 
     /**
-     * Récupère toutes les réservations stockées en base.
-     *
-     * @return Un objet {@code List<Reservations<Salarie, Timestamp, Vehicule>>} contenant chaque réservation stockée en base
+     * {@inheritDoc}
      */
     @Override
     public List<Reservations<Salarie, Timestamp, Vehicule>> lister() throws DAOException {
@@ -128,19 +121,16 @@ public class ReservationDAOImpl implements ReservationDAO {
     }
 
     /**
-     * Trouve si un véhicule est actuellement utilisé par une réservation.
-     *
-     * @param id Id du véhicule
-     * @return {@code boolean}
+     * {@inheritDoc}
      */
     @Override
-    public boolean estEnDeplacement(int id) throws DAOException {
+    public boolean estEnDeplacement(int idReservation) throws DAOException {
         String query = "SELECT COUNT(*) FROM " + table
-                + " WHERE " + idVehicule + " = ?"
+                + " WHERE " + id + " = ?"
                 + " AND " + dateDepart + " <= NOW()"
                 + " AND " + dateRetour + " IS NULL";
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
-            ps.setInt(1, id);
+            ps.setInt(1, idReservation);
 
             try (ResultSet rs = ps.executeQuery()) {
                 rs.next();
@@ -152,9 +142,7 @@ public class ReservationDAOImpl implements ReservationDAO {
     }
 
     /**
-     * Modifie les réservations d'un salarié.
-     *
-     * @param reservations Les réservations du salarié
+     * {@inheritDoc}
      */
     @Override
     public void modifier(Reservations<Salarie, Timestamp, Vehicule> reservations) throws DAOException {
@@ -181,21 +169,15 @@ public class ReservationDAOImpl implements ReservationDAO {
     }
 
     /**
-     * Clotûre une réservation.
-     *
-     * @param id        Id de la réservation
-     * @param timestamp Date de la fermeture
-     * @param kmRetour  Longueur du trajet à la cloturation
+     * {@inheritDoc}
      */
     @Override
-    public void cloturer(int id, Timestamp timestamp, int kmRetour) {
+    public void cloturer(int idReservation, Timestamp timestamp, int kmRetour) {
         // TODO
     }
 
     /**
-     * Supprime une réservation par son id.
-     *
-     * @param id Id d'une réservation
+     * {@inheritDoc}
      */
     @Override
     public void supprimer(int id) throws DAOException {
