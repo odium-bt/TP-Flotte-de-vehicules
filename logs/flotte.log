@@ -4,3 +4,6 @@
 [INFO ] 2026-10-30 15:15:33.000 [main] VehiculeService - Début de la récupération de la flotte depuis la base de données
 [INFO ] 2026-10-30 15:15:33.313 [main] VehiculeService - Flotte initialisée avec succès
 [ERROR] 2026-10-30 15:18:46.003 [main] AuthService - Impossible de lire les contenus de user.json
+[INFO ] 2026-10-30 15:24:39.332 [main] VehiculeService - Début de la récupération de la flotte depuis la base de données
+[INFO ] 2026-10-30 15:24:39.536 [main] VehiculeService - Flotte initialisée avec succès
+[INFO ] 2026-10-30 15:24:49.354 [main] AuthService - Authentification réussie
