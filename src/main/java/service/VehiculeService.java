@@ -15,6 +15,7 @@ import java.util.List;
 
 public class VehiculeService {
     private final Logger log = LogManager.getLogger(String.valueOf(VehiculeService.class));
+
     private final VehiculeDAO vehiculeDAO;
     private final ReservationDAO reservationDAO;
     private final Flotte flotte;
