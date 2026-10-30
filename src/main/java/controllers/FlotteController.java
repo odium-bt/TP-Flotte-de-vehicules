@@ -31,21 +31,18 @@ public class FlotteController {
 
         try {
             LocalDate dateMiseEnCirculation = LocalDate.parse(dateSaisie, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            Vehicule vehicule = new Vehicule(immatriculation, marque, modele, dateMiseEnCirculation, kilometrage);
-            vehiculeEnService.ajouterVehicule(vehicule);
+
+            vehiculeEnService.ajouterVehicule(immatriculation, marque, modele, dateMiseEnCirculation, kilometrage);
+
             vue.afficherSucces("Le véhicule immatriculé " + immatriculation + " a été ajouté!");
-        } catch (RegleGestionException e) {
-            vue.afficherRefus(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            vue.afficherRefus(e.getMessage());
-        } catch (DateTimeParseException e) {
+        } catch (RegleGestionException | IllegalArgumentException | DateTimeParseException e) {
             vue.afficherRefus(e.getMessage());
         }
     }
 
     public void afficherFlotte() {
 
-         vue.afficherVehicules(vehiculeEnService.afficherFlotte());
+        vue.afficherVehicules(vehiculeEnService.afficherFlotte());
     }
 
     public void retirerVehicule() {
