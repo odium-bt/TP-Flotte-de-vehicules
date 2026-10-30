@@ -15,12 +15,10 @@ public class SalarieDAOImpl implements SalarieDAO {
     private final String prenom = "prenom";
 
     /**
-     * Création d'un nouveau salarié dans la base de données.
-     *
-     * @param salarie Le salarié à créer
+     * {@inheritDoc}
      */
     @Override
-    public void creer(Salarie salarie) {
+    public void creer(Salarie salarie) throws DAOException {
         String query = "insert into " + table + " (" +
                 matricule + ", " +
                 nom + ", " +
@@ -38,13 +36,10 @@ public class SalarieDAOImpl implements SalarieDAO {
     }
 
     /**
-     * Cherche un salarié dans la base de données selon son matricule.
-     *
-     * @param matricule Le matricule du salarié
-     * @return Un objet {@code Salarie}, ou {@code null} si le salarié n'a pas été trouvé
+     * {@inheritDoc}
      */
     @Override
-    public Salarie trouverParMatricule(String matricule) {
+    public Salarie trouverParMatricule(String matricule) throws DAOException {
         String query = "select * from " + table + " where " + this.matricule + "=?";
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
             ps.setString(1, matricule);
@@ -67,12 +62,10 @@ public class SalarieDAOImpl implements SalarieDAO {
     }
 
     /**
-     * Récupère tous les salariés stockés en base.
-     *
-     * @return Un objet {@code List<Salarie>} contenant chaque salarié stocké en base
+     * {@inheritDoc}
      */
     @Override
-    public List<Salarie> lister() {
+    public List<Salarie> lister() throws DAOException {
         List<Salarie> salaries = new ArrayList<>();
         String query = "SELECT * FROM " + table;
 
@@ -96,12 +89,10 @@ public class SalarieDAOImpl implements SalarieDAO {
     }
 
     /**
-     * Modifie le salarié dans la base de donnée possédant le même matricule que l'objet fourni.
-     *
-     * @param salarie L'objet salarié modifié
+     * {@inheritDoc}
      */
     @Override
-    public void modifier(Salarie salarie) {
+    public void modifier(Salarie salarie) throws DAOException {
         String query = "update " + table + " set "
                 + nom + "=?,"
                 + prenom + "=?"
@@ -119,12 +110,10 @@ public class SalarieDAOImpl implements SalarieDAO {
     }
 
     /**
-     * Supprime le salarié selon le matricule fourni.
-     *
-     * @param matricule Matricule du salarié
+     * {@inheritDoc}
      */
     @Override
-    public void supprimer(String matricule) {
+    public void supprimer(String matricule) throws DAOException {
         String query = "delete from " + table + " where " + this.matricule + " =?";
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
             ps.setString(1, matricule);

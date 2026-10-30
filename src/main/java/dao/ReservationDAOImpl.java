@@ -8,7 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,12 +24,10 @@ public class ReservationDAOImpl implements ReservationDAO {
 
 
     /**
-     * Création de nouvelles réservations dans la base de données.
-     *
-     * @param reservations Les réservations à créer
+     * {@inheritDoc}
      */
     @Override
-    public void creer(Reservations<Salarie, Timestamp, Vehicule> reservations) {
+    public void creer(Reservations<Salarie, Timestamp, Vehicule> reservations) throws DAOException {
         String query = "INSERT INTO " + table + " ("
                 + matricule + ", "
                 + idVehicule + ", "
@@ -55,13 +52,10 @@ public class ReservationDAOImpl implements ReservationDAO {
     }
 
     /**
-     * Cherche les réservations associées au salarié à qui appartient la matricule donnée
-     *
-     * @param matricule Le matricule du salarié
-     * @return Un objet Reservations contenant les réservations associées à un salarié
+     * {@inheritDoc}
      */
     @Override
-    public Reservations<Salarie, Timestamp, Vehicule> trouverParMatricule(String matricule) {
+    public Reservations<Salarie, Timestamp, Vehicule> trouverParMatricule(String matricule) throws DAOException {
         String query = "SELECT * FROM " + table
                 + " WHERE " + this.matricule + " = ?";
 
@@ -96,12 +90,10 @@ public class ReservationDAOImpl implements ReservationDAO {
     }
 
     /**
-     * Récupère toutes les réservations stockées en base.
-     *
-     * @return Un objet {@code List<Reservations<Salarie, Timestamp, Vehicule>>} contenant chaque réservation stockée en base
+     * {@inheritDoc}
      */
     @Override
-    public List<Reservations<Salarie, Timestamp, Vehicule>> lister() {
+    public List<Reservations<Salarie, Timestamp, Vehicule>> lister() throws DAOException {
         List<Reservations<Salarie, Timestamp, Vehicule>> liste = new ArrayList<>();
 
         // Récupère uniquement les matricules qui ont des réservations, sans doublons
@@ -129,24 +121,31 @@ public class ReservationDAOImpl implements ReservationDAO {
     }
 
     /**
-     * Trouve si un véhicule est actuellement utilisé par une réservation.
-     *
-     * @param id Id du véhicule
-     * @return {@code boolean}
+     * {@inheritDoc}
      */
     @Override
-    public boolean estEnDeplacement(int id) {
-        // TODO
-        return false;
+    public boolean estEnDeplacement(int idReservation) throws DAOException {
+        String query = "SELECT COUNT(*) FROM " + table
+                + " WHERE " + id + " = ?"
+                + " AND " + dateDepart + " <= NOW()"
+                + " AND " + dateRetour + " IS NULL";
+        try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
+            ps.setInt(1, idReservation);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Erreur lors de la vérification du déplacement du véhicule");
+        }
     }
 
     /**
-     * Modifie les réservations d'un salarié.
-     *
-     * @param reservations Les réservations du salarié
+     * {@inheritDoc}
      */
     @Override
-    public void modifier(Reservations<Salarie, Timestamp, Vehicule> reservations) {
+    public void modifier(Reservations<Salarie, Timestamp, Vehicule> reservations) throws DAOException {
         String query = "UPDATE " + table + " SET "
                 + matricule + " = ?, "
                 + idVehicule + " = ?, "
@@ -170,24 +169,18 @@ public class ReservationDAOImpl implements ReservationDAO {
     }
 
     /**
-     * Clotûre une réservation.
-     *
-     * @param id        Id de la réservation
-     * @param timestamp Date de la fermeture
-     * @param kmRetour  Longueur du trajet à la cloturation
+     * {@inheritDoc}
      */
     @Override
-    public void cloturer(int id, Timestamp timestamp, int kmRetour) {
+    public void cloturer(int idReservation, Timestamp timestamp, int kmRetour) {
         // TODO
     }
 
     /**
-     * Supprime une réservation par son id.
-     *
-     * @param id Id d'une réservation
+     * {@inheritDoc}
      */
     @Override
-    public void supprimer(int id) {
+    public void supprimer(int id) throws DAOException {
         // TODO Corriger
         String query = "DELETE FROM " + table
                 + " WHERE " + this.id + " = ?";
