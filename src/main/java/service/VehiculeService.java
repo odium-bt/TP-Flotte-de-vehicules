@@ -1,5 +1,6 @@
 package service;
 
+import dao.DAOException;
 import dao.ReservationDAO;
 import dao.VehiculeDAO;
 import modeles.Flotte;
@@ -7,6 +8,7 @@ import modeles.Vehicule;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -23,9 +25,22 @@ public class VehiculeService {
         this.flotte = flotte;
     }
 
-    public void ajouterVehicule() {
-        // TODO Ajouter véhicule, mais vérifier les règles de gestion (immatriculation unique etc)
-        //      Lever RegleGestionException en cas d'erreur
+    public void ajouterVehicule(String immatriculation, String marque, String modele, LocalDate dateMiseEnCirculation, int kilometrage) {
+        log.info("Création d'un véhicule");
+
+        Vehicule vehicule = new Vehicule(immatriculation, marque, modele, dateMiseEnCirculation, kilometrage);
+
+        try {
+            if (vehiculeDAO.trouverParImmatriculation(immatriculation) != null) {
+                throw new RegleGestionException("Un véhicule avec cette immatriculation existe déjà");
+            }
+
+            vehiculeDAO.creer(vehicule);
+
+            log.info("Véhicule créé");
+        } catch (DAOException | RegleGestionException e) {
+            log.error(e.getMessage());
+        }
     }
 
     /**
@@ -34,21 +49,52 @@ public class VehiculeService {
      * @return Retourne une {@code List<String>} contenant chaque véhicule sous forme de string
      */
     public List<String> afficherFlotte() {
+        log.info("Affichage de la flotte");
+
         List<String> res = new ArrayList<>();
 
-        for (Vehicule v : flotte.getListeVehicules()) {
-            res.add(v.toString());
-        }
+        try {
+            for (Vehicule v : flotte.getListeVehicules()) {
+                res.add(v.toString());
+            }
 
-        return res;
+            return res;
+        } catch (DAOException e) {
+            log.error(e.getMessage());
+            return null;
+        }
     }
 
-    public void rechercheParImmatriculation(String immatriculation) {
+    public Vehicule rechercheParImmatriculation(String immatriculation) {
+        log.info("Recherche du véhicule immatriculé {}", immatriculation);
+        try {
+            Vehicule v = vehiculeDAO.trouverParImmatriculation(immatriculation);
+            log.info("Véhicule trouvé avec succès");
+            return v;
+        } catch (DAOException e) {
+            log.error(e.getMessage());
+            return null;
+        }
     }
 
     public void retirerVehicule(int id) {
-        // TODO Chercher si le véhicule est actuellement utilisé dans une réservation
-        //      Sinon le supprimer
+        log.info("Tentative de suppression du véhicule {}", id);
+
+        try {
+            if (vehiculeDAO.trouverParId(id) == null) {
+                throw new RegleGestionException("Ce véhicule n'existe pas");
+            }
+
+            if (reservationDAO.estEnDeplacement(id)) {
+                throw new RegleGestionException("Ce véhicule est actuellement en déplacement");
+            }
+
+            vehiculeDAO.supprimer(id);
+
+            log.info("Véhicule {} supprimé avec succès", id);
+        } catch (DAOException | RegleGestionException e) {
+            log.error(e.getMessage());
+        }
     }
 
     public void trierMarque() {
