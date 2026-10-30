@@ -46,9 +46,12 @@ public class FlotteController {
 
     public void afficherFlotte() {
 
-        for (String ligne : vehiculeEnService.afficherFlotte()) {
-            vue.afficherSucces(ligne);
+        List<Vehicule> vehicules = vehiculeEnService.afficherFlotte();
+        if (vehicules == null) {
+            vue.afficherRefus("Impossible de récupérer la liste");
+            return;
         }
+        vue.afficherVehicules(vehicules);
     }
 
     public void retirerVehicule() {
@@ -60,7 +63,7 @@ public class FlotteController {
             if (vehicule == null) {
                 vue.afficherRefus("véhicule introuvable.");
             } else {
-                vehiculeEnService.retirerVehicule(vehicule.getId());
+                vehiculeEnService.retirerVehicule(immatriculation);
                 vue.afficherSucces("Véhicule " + immatriculation + " retiré de la flotte.");
             }
         } else {
