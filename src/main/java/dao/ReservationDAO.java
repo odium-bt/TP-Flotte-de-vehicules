@@ -31,12 +31,12 @@ public interface ReservationDAO {
     List<Reservations<Salarie, Timestamp, Vehicule>> lister();
 
     /**
-     * Trouve si un véhicule est actuellement utilisé par une réservation.
+     * Trouve si une réservation est actuellement en cours de déplacement.
      *
-     * @param id Id du véhicule
+     * @param idReservation Id de la réservation
      * @return {@code boolean}
      */
-    boolean estEnDeplacement(int id);
+    boolean estEnDeplacement(int idReservation);
 
     /**
      * Modifie les réservations d'un salarié.
@@ -48,11 +48,11 @@ public interface ReservationDAO {
     /**
      * Clotûre une réservation.
      *
-     * @param id        Id de la réservation
-     * @param timestamp Date de la fermeture
-     * @param kmRetour  Longueur du trajet à la cloturation
+     * @param idReservation Id de la réservation
+     * @param timestamp     Date de la fermeture
+     * @param kmRetour      Longueur du trajet à la cloturation
      */
-    void cloturer(int id, Timestamp timestamp, int kmRetour);
+    void cloturer(int idReservation, Timestamp timestamp, int kmRetour);
 
     /**
      * Supprime une réservation par son id.
