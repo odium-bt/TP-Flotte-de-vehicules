@@ -23,9 +23,7 @@ public class VehiculeDAOImpl implements VehiculeDAO {
     private final String kilometrage = "kilometrage";
 
     /**
-     * Création d'un nouveau véhicule dans la base de données.
-     *
-     * @param vehicule Le véhicule à créer
+     * {@inheritDoc}
      */
     @Override
     public void creer(Vehicule vehicule) throws DAOException {
@@ -51,10 +49,7 @@ public class VehiculeDAOImpl implements VehiculeDAO {
     }
 
     /**
-     * Cherche un véhicule dans la base de données selon son id.
-     *
-     * @param id L'id du véhicule
-     * @return Un objet {@code Vehicule}, ou {@code null} si le véhicule n'a pas été trouvé
+     * {@inheritDoc}
      */
     @Override
     public Vehicule trouverParId(int id) throws DAOException {
@@ -83,10 +78,7 @@ public class VehiculeDAOImpl implements VehiculeDAO {
     }
 
     /**
-     * Cherche un véhicule dans la base de données selon son immatriculation.
-     *
-     * @param immat L'immatriculation du véhicule
-     * @return Un objet {@code Vehicule}, ou {@code null} si le véhicule n'a pas été trouvé
+     * {@inheritDoc}
      */
     @Override
     public Vehicule trouverParImmatriculation(String immat) throws DAOException {
@@ -115,9 +107,7 @@ public class VehiculeDAOImpl implements VehiculeDAO {
     }
 
     /**
-     * Récupère tous les véhicules stockés en base.
-     *
-     * @return Un objet {@code List<Vehicule>} contenant chaque véhicule stocké en base
+     * {@inheritDoc}
      */
     @Override
     public List<Vehicule> lister() throws DAOException {
@@ -147,9 +137,7 @@ public class VehiculeDAOImpl implements VehiculeDAO {
     }
 
     /**
-     * Modifie le véhicule dans la base de donnée possédant le même id que l'objet fourni.
-     *
-     * @param vehicule L'objet véhicule modifié
+     * {@inheritDoc}
      */
     @Override
     public void modifier(Vehicule vehicule) throws DAOException {
@@ -174,9 +162,7 @@ public class VehiculeDAOImpl implements VehiculeDAO {
     }
 
     /**
-     * Supprime le véhicule selon l'id fourni.
-     *
-     * @param id Id du véhicule
+     * {@inheritDoc}
      */
     @Override
     public void supprimer(int id) throws DAOException {
