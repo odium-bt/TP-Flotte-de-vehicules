@@ -10,7 +10,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.io.File;
 
 public class AuthService {
-    private final Logger log = LogManager.getLogger(String.valueOf(ReservationService.class));
+    private final Logger log = LogManager.getLogger(String.valueOf(AuthService.class));
 
     private int counter = 0;
 
@@ -33,7 +33,7 @@ public class AuthService {
             String login = json.get("login").asString();
             String pwHash = json.get("motDePasseHash").asString();
 
-            if ((inputLogin.equals(login) || BCrypt.checkpw(inputPw, pwHash))) {
+            if ((inputLogin.equals(login) && BCrypt.checkpw(inputPw, pwHash))) {
                 counter = 0;
                 log.info("Authentification réussie");
                 return 0;
