@@ -28,7 +28,7 @@ public class VehiculeDAOImpl implements VehiculeDAO {
      * @param vehicule Le véhicule à créer
      */
     @Override
-    public void creer(Vehicule vehicule) {
+    public void creer(Vehicule vehicule) throws DAOException {
         String query = "insert into " + table + " (" +
                 id + ", " +
                 immatriculation + ", " +
@@ -57,7 +57,7 @@ public class VehiculeDAOImpl implements VehiculeDAO {
      * @return Un objet {@code Vehicule}, ou {@code null} si le véhicule n'a pas été trouvé
      */
     @Override
-    public Vehicule trouverParId(int id) {
+    public Vehicule trouverParId(int id) throws DAOException {
         String query = "select * from " + table + " where " + this.id + "=?";
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
             ps.setInt(1, id);
@@ -89,7 +89,7 @@ public class VehiculeDAOImpl implements VehiculeDAO {
      * @return Un objet {@code Vehicule}, ou {@code null} si le véhicule n'a pas été trouvé
      */
     @Override
-    public Vehicule trouverParImmatriculation(String immat) {
+    public Vehicule trouverParImmatriculation(String immat) throws DAOException {
         String query = "select * from " + table + " where " + immatriculation + "=?";
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
             ps.setString(1, immat);
@@ -120,7 +120,7 @@ public class VehiculeDAOImpl implements VehiculeDAO {
      * @return Un objet {@code List<Vehicule>} contenant chaque véhicule stocké en base
      */
     @Override
-    public List<Vehicule> lister() {
+    public List<Vehicule> lister() throws DAOException {
         List<Vehicule> vehicules = new ArrayList<>();
         String query = "SELECT * FROM " + table;
 
@@ -152,7 +152,7 @@ public class VehiculeDAOImpl implements VehiculeDAO {
      * @param vehicule L'objet véhicule modifié
      */
     @Override
-    public void modifier(Vehicule vehicule) {
+    public void modifier(Vehicule vehicule) throws DAOException {
         String query = "update " + table + " set "
                 + immatriculation + "=?,"
                 + marque + "=?,"
@@ -179,7 +179,7 @@ public class VehiculeDAOImpl implements VehiculeDAO {
      * @param id Id du véhicule
      */
     @Override
-    public void supprimer(int id) {
+    public void supprimer(int id) throws DAOException {
         String query = "delete from " + table + " where " + this.id + " =?";
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
             ps.setInt(1, id);

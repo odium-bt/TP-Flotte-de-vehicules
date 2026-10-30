@@ -20,7 +20,7 @@ public class SalarieDAOImpl implements SalarieDAO {
      * @param salarie Le salarié à créer
      */
     @Override
-    public void creer(Salarie salarie) {
+    public void creer(Salarie salarie) throws DAOException {
         String query = "insert into " + table + " (" +
                 matricule + ", " +
                 nom + ", " +
@@ -44,7 +44,7 @@ public class SalarieDAOImpl implements SalarieDAO {
      * @return Un objet {@code Salarie}, ou {@code null} si le salarié n'a pas été trouvé
      */
     @Override
-    public Salarie trouverParMatricule(String matricule) {
+    public Salarie trouverParMatricule(String matricule) throws DAOException {
         String query = "select * from " + table + " where " + this.matricule + "=?";
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
             ps.setString(1, matricule);
@@ -72,7 +72,7 @@ public class SalarieDAOImpl implements SalarieDAO {
      * @return Un objet {@code List<Salarie>} contenant chaque salarié stocké en base
      */
     @Override
-    public List<Salarie> lister() {
+    public List<Salarie> lister() throws DAOException {
         List<Salarie> salaries = new ArrayList<>();
         String query = "SELECT * FROM " + table;
 
@@ -101,7 +101,7 @@ public class SalarieDAOImpl implements SalarieDAO {
      * @param salarie L'objet salarié modifié
      */
     @Override
-    public void modifier(Salarie salarie) {
+    public void modifier(Salarie salarie) throws DAOException {
         String query = "update " + table + " set "
                 + nom + "=?,"
                 + prenom + "=?"
@@ -124,7 +124,7 @@ public class SalarieDAOImpl implements SalarieDAO {
      * @param matricule Matricule du salarié
      */
     @Override
-    public void supprimer(String matricule) {
+    public void supprimer(String matricule) throws DAOException {
         String query = "delete from " + table + " where " + this.matricule + " =?";
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
             ps.setString(1, matricule);
