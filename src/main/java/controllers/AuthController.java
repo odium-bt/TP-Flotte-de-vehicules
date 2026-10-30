@@ -1,35 +1,38 @@
 package controllers;
 
+import service.AuthService;
+import vue.MenuConsole;
+
 public class AuthController {
 
+    private static final int MAX_TENTATIVES = 3;
     private final AuthService authService;
-    private boolean connecte = false;
+    private final MenuConsole vue;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, MenuConsole vue) {
         this.authService = authService;
+        this.vue = vue;
     }
 
-    public String authentifier(String login, String motDePasse) {
-        // verifier en nom de méthode (booléen?) de la lecture des identifiants (json)
-        // et encryptage BCrypt puis renvoi true ou false pour compter les échecs
-        //
-        connecte = authService.verifier(login, motDePasse);
-        if (connecte) {
-            return "Connexion réussie. Bienvenue, " + login + ".";
+    public boolean connecter() {
+        while (true) {
+            String login = vue.saisieTexte("Login");
+            String motDePasse = vue.saisieTexte("Mot de passe");
+            int resultat = authService.login(login, motDePasse);
+
+            if (resultat == 0) {
+                vue.afficherSucces("Connexion réussie. Bienvenue, " + login + ".");
+                return true;
+            }
+            if (resultat == -1) {
+                vue.afficherRefus("impossible de lire le fichier des identifiants.");
+                return false;
+            }
+            if (resultat >= MAX_TENTATIVES) {
+                vue.afficherRefus("nombre maximal de tentatives atteint. Fermeture de l'application.");
+                return false;
+            }
+            vue.afficherRefus("identifiants incorrects. Tentatives restantes : " + (MAX_TENTATIVES - resultat));
         }
-        // getTentativesRestantes() sera le int pour décompter les tentatives
-        // dans le Authservice
-        if (authService.getTentativesRestantes() <= 0) {
-            return "Identifiants incorrects. Nombre de tentatives atteinte.\nFermeture de l'application.";
-        }
-        return "Identifiants incorrects. Tentatives restantes : " + authService.getTentativesRestantes();
-    }
-
-    public boolean estConnecte() {
-        return connecte;
-    }
-
-    public boolean tentativesEpuisees() {
-        return authService.getTentativesRestantes() <= 0;
     }
 }
