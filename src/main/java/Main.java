@@ -1,6 +1,7 @@
 import controllers.FlotteController;
 import controllers.ReservationController;
 import dao.DAOFactory;
+import modeles.Flotte;
 import service.ReservationService;
 import service.VehiculeService;
 import vue.MenuConsole;
@@ -10,12 +11,14 @@ public class Main {
 
         DAOFactory factory = DAOFactory.getInstance();
 
-        ReservationService reservationService = new ReservationService(factory.getVehiculeDAO(), factory.getReservationDAO());
+        Flotte flotte = new Flotte();
 
-        VehiculeService vehiculeService = new VehiculeService(factory.getVehiculeDAO(), factory.getReservationDAO());
+        ReservationService reservationService = new ReservationService(factory.getVehiculeDAO(), factory.getReservationDAO(), factory.getSalarieDAO());
+
+        VehiculeService vehiculeService = new VehiculeService(factory.getVehiculeDAO(), factory.getReservationDAO(), flotte);
 
         ReservationController reservationController = new ReservationController(reservationService);
-        FlotteController flotteController = new FlotteController(VehiculeService);
+        FlotteController flotteController = new FlotteController(vehiculeService);
 
         new MenuConsole(flotteController, reservationController).demarrer();
     }
