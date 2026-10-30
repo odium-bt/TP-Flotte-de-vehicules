@@ -10,10 +10,15 @@ import org.apache.logging.log4j.LogManager;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 public class ReservationService {
     private final Logger log = LogManager.getLogger(String.valueOf(ReservationService.class));
+
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private final VehiculeDAO vehiculeDAO;
     private final ReservationDAO reservationDAO;
@@ -33,17 +38,19 @@ public class ReservationService {
      * @param prenom    Le prénom
      */
     public void ajouterSalarie(String matricule, String nom, String prenom) {
-        log.info("Création d'un salarié");
+        executor.submit(() -> {
+            log.info("Création d'un salarié");
 
-        Salarie salarie = new Salarie(matricule, prenom, nom);
+            Salarie salarie = new Salarie(matricule, prenom, nom);
 
-        try {
-            salarieDAO.creer(salarie);
+            try {
+                salarieDAO.creer(salarie);
 
-            log.info("Salarié créé");
-        } catch (DAOException e) {
-            log.error(e.getMessage());
-        }
+                log.info("Salarié créé");
+            } catch (DAOException e) {
+                log.error(e.getMessage());
+            }
+        });
     }
 
     /**
@@ -91,16 +98,19 @@ public class ReservationService {
      * @param matricule Son matricule
      */
     public void supprimerParMatricule(String matricule) {
-        log.info("Suppression du salarié {}", matricule);
+        executor.submit(() -> {
+            log.info("Suppression du salarié {}", matricule);
 
-        // TODO Check si le salarié est en déplacement
+            // TODO Check si le salarié est en déplacement
+        });
     }
 
     /**
      * Créé une nouvelle réservation.
      */
     public void creerReservation() {
-        // TODO new Reservation();
+        executor.submit(() -> {// TODO new Reservation();
+        });
     }
 
     /**
@@ -120,31 +130,33 @@ public class ReservationService {
      * @param kmRetour        Kilométrage au retour
      */
     public void enregistrerRetour(String immatriculation, int kmRetour) {
-        log.info("Enregistrement d'un retour");
+        executor.submit(() -> {
+            log.info("Enregistrement d'un retour");
 
-        try {
-            Vehicule v = vehiculeDAO.trouverParImmatriculation(immatriculation);
+            try {
+                Vehicule v = vehiculeDAO.trouverParImmatriculation(immatriculation);
 
-            // Règles de gestion
-            if (v == null) {
-                throw new RegleGestionException("Véhicule inconnu");
+                // Règles de gestion
+                if (v == null) {
+                    throw new RegleGestionException("Véhicule inconnu");
+                }
+                if (!reservationDAO.estEnDeplacement(v.getId())) {
+                    throw new RegleGestionException("Ce véhicule n'est pas en déplacement");
+                }
+                if (kmRetour < v.getKilometrage()) {
+                    throw new RegleGestionException("Kilométrage inférieur au compteur actuel");
+                }
+
+                // Persistance : deux DAO pour une seule action
+                reservationDAO.cloturer(v.getId(), new Timestamp(System.currentTimeMillis()), kmRetour);
+                v.setKilometrage(kmRetour);
+                vehiculeDAO.modifier(v);
+
+                log.info("Retour de {} à {} km", immatriculation, kmRetour);
+            } catch (DAOException | RegleGestionException e) {
+                log.error(e.getMessage());
             }
-            if (!reservationDAO.estEnDeplacement(v.getId())) {
-                throw new RegleGestionException("Ce véhicule n'est pas en déplacement");
-            }
-            if (kmRetour < v.getKilometrage()) {
-                throw new RegleGestionException("Kilométrage inférieur au compteur actuel");
-            }
-
-            // Persistance : deux DAO pour une seule action
-            reservationDAO.cloturer(v.getId(), new Timestamp(System.currentTimeMillis()), kmRetour);
-            v.setKilometrage(kmRetour);
-            vehiculeDAO.modifier(v);
-
-            log.info("Retour de {} à {} km", immatriculation, kmRetour);
-        } catch (DAOException | RegleGestionException e) {
-            log.error(e.getMessage());
-        }
+        });
     }
 
     /**
@@ -153,18 +165,36 @@ public class ReservationService {
      * @param idReservation Id de la réservation
      */
     public void supprimerReservation(int idReservation) {
-        log.info("Tentative de suppression d'une réservation");
+        executor.submit(() -> {
+            log.info("Tentative de suppression d'une réservation");
+
+            try {
+                if (reservationDAO.estEnDeplacement(idReservation)) {
+                    throw new RegleGestionException("Cette réservation est en cours");
+                }
+
+                reservationDAO.supprimer(idReservation);
+
+                log.info("Réservation supprimée avec succès");
+            } catch (DAOException | RegleGestionException e) {
+                log.error(e.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Ferme le thread du service.
+     */
+    public void fermer() {
+        executor.shutdown();
 
         try {
-            if (reservationDAO.estEnDeplacement(idReservation)) {
-                throw new RegleGestionException("Cette réservation est en cours");
+            if (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
             }
-
-            reservationDAO.supprimer(idReservation);
-
-            log.info("Réservation supprimée avec succès");
-        } catch (DAOException | RegleGestionException e) {
-            log.error(e.getMessage());
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
         }
     }
 }
