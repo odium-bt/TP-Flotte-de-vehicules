@@ -1,9 +1,8 @@
-[INFO ] 2026-10-30 15:15:06.473 [main] VehiculeService - Début de la récupération de la flotte depuis la base de données
-[INFO ] 2026-10-30 15:15:06.667 [main] VehiculeService - Flotte initialisée avec succès
-[ERROR] 2026-10-30 15:15:16.822 [main] AuthService - Impossible de lire les contenus de user.json
-[INFO ] 2026-10-30 15:15:33.000 [main] VehiculeService - Début de la récupération de la flotte depuis la base de données
-[INFO ] 2026-10-30 15:15:33.313 [main] VehiculeService - Flotte initialisée avec succès
-[ERROR] 2026-10-30 15:18:46.003 [main] AuthService - Impossible de lire les contenus de user.json
-[INFO ] 2026-10-30 15:24:39.332 [main] VehiculeService - Début de la récupération de la flotte depuis la base de données
-[INFO ] 2026-10-30 15:24:39.536 [main] VehiculeService - Flotte initialisée avec succès
-[INFO ] 2026-10-30 15:24:49.354 [main] AuthService - Authentification réussie
+[INFO ] 2026-10-30 12:14:34.345 [main] VehiculeService - Début de la récupération de la flotte depuis la base de données
+[INFO ] 2026-10-30 12:16:33.669 [main] VehiculeService - Début de la récupération de la flotte depuis la base de données
+[INFO ] 2026-10-30 12:17:19.107 [main] VehiculeService - Début de la récupération de la flotte depuis la base de données
+[ERROR] 2026-10-30 12:17:19.111 [main] VehiculeService - Impossible de trouver dao.properties
+[INFO ] 2026-10-30 12:23:38.707 [main] VehiculeService - Début de la récupération de la flotte depuis la base de données
+[INFO ] 2026-10-30 12:23:38.905 [main] VehiculeService - Flotte initialisée avec succès
+[INFO ] 2026-10-30 13:49:06.488 [main] VehiculeService - Début de la récupération de la flotte depuis la base de données
+[INFO ] 2026-10-30 13:49:06.745 [main] VehiculeService - Flotte initialisée avec succès
