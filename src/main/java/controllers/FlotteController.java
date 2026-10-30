@@ -33,22 +33,20 @@ public class FlotteController {
 
             LocalDate dateMiseEnCirculation = LocalDate.parse(dateSaisie, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             vehiculeEnService.ajouterVehicule(immatriculation, marque, modele, dateMiseEnCirculation, kilometrage);
-            vue.afficherSucces("Le véhicule immatriculé " + immatriculation + " a été ajouté");
 
-        } catch (RegleGestionException e) {
-            vue.afficherRefus(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            vue.afficherRefus(e.getMessage());
-        } catch (DateTimeParseException e) {
+        } catch (RegleGestionException | IllegalArgumentException | DateTimeParseException e) {
             vue.afficherRefus(e.getMessage());
         }
     }
 
     public void afficherFlotte() {
 
-        for (String ligne : vehiculeEnService.afficherFlotte()) {
-            vue.afficherSucces(ligne);
+        List<Vehicule> vehicules = vehiculeEnService.afficherFlotte();
+        if (vehicules == null) {
+            vue.afficherRefus("Impossible de récupérer la liste");
+            return;
         }
+        vue.afficherVehicules(vehicules);
     }
 
     public void retirerVehicule() {
@@ -60,7 +58,7 @@ public class FlotteController {
             if (vehicule == null) {
                 vue.afficherRefus("véhicule introuvable.");
             } else {
-                vehiculeEnService.retirerVehicule(vehicule.getId());
+                vehiculeEnService.retirerVehicule(immatriculation);
                 vue.afficherSucces("Véhicule " + immatriculation + " retiré de la flotte.");
             }
         } else {

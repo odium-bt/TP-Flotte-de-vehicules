@@ -8,6 +8,7 @@ import modeles.Vehicule;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -35,19 +36,19 @@ public class VehiculeService {
 
     public void ajouterVehicule(String immatriculation, String marque, String modele, LocalDate dateMiseEnCirculation, int kilometrage) {
         executor.submit(() -> {
-            log.info("Création d'un véhicule");
+            log.info("Début de l'ajout d'un véhicule...");
 
             Vehicule vehicule = new Vehicule(immatriculation, marque, modele, dateMiseEnCirculation, kilometrage);
 
             try {
                 if (vehiculeDAO.trouverParImmatriculation(immatriculation) != null) {
-                    throw new RegleGestionException("Un véhicule avec cette immatriculation existe déjà");
+                    throw new RegleGestionException("Un véhicule avec cette immatriculation existe déjà !");
                 }
 
                 vehiculeDAO.creer(vehicule);
 
-                log.info("Véhicule créé");
-            } catch (DAOException | RegleGestionException e) {
+                log.info("Le véhicule immatriculé {} a été ajouté !", immatriculation);
+            } catch (DAOException e) {
                 log.error(e.getMessage(), e);
             }
         });
@@ -73,10 +74,14 @@ public class VehiculeService {
      * @return Retourne une {@code List<String>} contenant chaque véhicule
      */
     public List<Vehicule> afficherFlotte() {
-        log.info("Affichage de la flotte");
+        log.info("Récupération de la flotte...");
 
         try {
-            return new ArrayList<>(flotte.getListeVehicules());
+            List<Vehicule> flotte = new ArrayList<>(this.flotte.getListeVehicules());
+            if (flotte.isEmpty()) {
+                log.info("La flotte est actuellement vide, aucun véhicule à afficher.");
+            }
+            return flotte;
         } catch (DAOException e) {
             log.error(e.getMessage(), e);
             return null;

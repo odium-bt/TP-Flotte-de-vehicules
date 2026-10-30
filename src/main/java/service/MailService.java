@@ -18,7 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MailService {
-    private final Logger log = LogManager.getLogger(String.valueOf(AuthService.class));
+    private final Logger log = LogManager.getLogger(String.valueOf(MailService.class));
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 

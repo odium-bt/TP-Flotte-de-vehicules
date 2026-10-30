@@ -61,7 +61,6 @@ public class MenuConsole {
     }
 
     public void afficherVehicules(List<Vehicule> vehicules) {
-
         for (Vehicule vehicule : vehicules) {
             System.out.println(vehicule);
         }
