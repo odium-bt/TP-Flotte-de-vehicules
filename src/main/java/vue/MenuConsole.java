@@ -18,15 +18,6 @@ public class MenuConsole {
 
     public final Scanner scanner = new Scanner(System.in);
 
-    private final FlotteController flotteController;
-    private final ReservationController reservationController;
-
-
-    public MenuConsole(FlotteController flotteController, ReservationController reservationController) {
-        this.flotteController = flotteController;
-        this.reservationController = reservationController;
-    }
-
     public int afficherMenuEtLireChoix() {
         System.out.println("=============== Menu Principal ===============");
         System.out.println("VÉHICULES");
@@ -90,8 +81,5 @@ public class MenuConsole {
     public void afficherRefus(String message) {
         System.out.println("Refusé : " + message);
     }
-
-
-    // Méthodes appelées dans le switch du menu
 
 }

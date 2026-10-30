@@ -30,10 +30,11 @@ public class FlotteController {
         int kilometrage = vue.saisieEntier("Kilométrage : ");
 
         try {
+
             LocalDate dateMiseEnCirculation = LocalDate.parse(dateSaisie, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            Vehicule vehicule = new Vehicule(immatriculation, marque, modele, dateMiseEnCirculation, kilometrage);
-            vehiculeEnService.ajouterVehicule(vehicule);
-            vue.afficherSucces("Le véhicule immatriculé " + immatriculation + " a été ajouté!");
+            vehiculeEnService.ajouterVehicule(immatriculation, marque, modele, dateMiseEnCirculation, kilometrage);
+            vue.afficherSucces("Le véhicule immatriculé " + immatriculation + " a été ajouté");
+
         } catch (RegleGestionException e) {
             vue.afficherRefus(e.getMessage());
         } catch (IllegalArgumentException e) {
@@ -45,20 +46,22 @@ public class FlotteController {
 
     public void afficherFlotte() {
 
-         vue.afficherVehicules(vehiculeEnService.afficherFlotte());
+        for (String ligne : vehiculeEnService.afficherFlotte()) {
+            vue.afficherSucces(ligne);
+        }
     }
 
     public void retirerVehicule() {
+        String immatriculation = vue.saisieTexte("Immatriculation du véhicule à retirer").toUpperCase();
+        String confirmation = vue.saisieTexte("Confirmer le retrait de " + immatriculation + " ? (o/n)");
 
-        String immatriculation = vue.saisieTexte("Immatriculation du véhicule à retirer : ").toUpperCase();
-        String validation = vue.saisieTexte("Confirmer le retrait de " + immatriculation + " ? (o/n)");
-
-        if (validation.equalsIgnoreCase("o")) {
-            try {
-                vehiculeEnService.retirerVehicule(immatriculation);
-                vue.afficherSucces("Le véhicule " + immatriculation + " a été retiré avec succès.");
-            } catch (RegleGestionException e) {
-                vue.afficherRefus(e.getMessage());
+        if (confirmation.equalsIgnoreCase("o")) {
+            Vehicule vehicule = vehiculeEnService.rechercheParImmatriculation(immatriculation);
+            if (vehicule == null) {
+                vue.afficherRefus("véhicule introuvable.");
+            } else {
+                vehiculeEnService.retirerVehicule(vehicule.getId());
+                vue.afficherSucces("Véhicule " + immatriculation + " retiré de la flotte.");
             }
         } else {
             vue.afficherSucces("Retrait annulé.");
@@ -66,7 +69,7 @@ public class FlotteController {
     }
 
 
-    public Vehicule rechercherVehicule() {
+    public void rechercherVehicule() {
 
         String immatriculation = vue.saisieTexte("Saisissez l'immatriculation :").toUpperCase();
         Vehicule vehicule = vehiculeEnService.rechercheParImmatriculation(immatriculation);
@@ -80,26 +83,26 @@ public class FlotteController {
     }
 
     public void trierFlotte() {
-
         vue.afficherSucces("1. Par marque, puis modèle");
-        vue.afficherSucces("2. Par date de mise en circulation");
+        vue.afficherSucces("2. Par date de mise en circulation (plus ancien d'abord)");
         vue.afficherSucces("3. Par kilométrage décroissant");
-        int choix = vue.saisieEntier("Tri : ");
+        int choix = vue.saisieEntier("Tri");
 
         switch (choix) {
             case 1:
-                vue.afficherVehicules(vehiculeEnService.trierMarque());
+                vehiculeEnService.trierMarque();
                 break;
             case 2:
-                vue.afficherVehicules(vehiculeEnService.trierDate());
+                vehiculeEnService.trierDate();
                 break;
             case 3:
-                vue.afficherVehicules(vehiculeEnService.trierKilometrageDecroissant());
+                vehiculeEnService.trierKilometrageDecroissant();
                 break;
             default:
-                vue.afficherRefus("Choix de tri non reconnu");
+                vue.afficherRefus("choix de tri inconnu.");
+                return;
         }
-
+        afficherFlotte();
     }
 
 
