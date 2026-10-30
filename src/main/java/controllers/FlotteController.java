@@ -33,6 +33,7 @@ public class FlotteController {
 
             LocalDate dateMiseEnCirculation = LocalDate.parse(dateSaisie, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             vehiculeEnService.ajouterVehicule(immatriculation, marque, modele, dateMiseEnCirculation, kilometrage);
+            vue.afficherSucces("Véhicule ajoute!");
 
         } catch (RegleGestionException | IllegalArgumentException | DateTimeParseException e) {
             vue.afficherRefus(e.getMessage());
