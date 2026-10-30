@@ -6,7 +6,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,23 +27,21 @@ public class VehiculeDAOImpl implements VehiculeDAO {
     @Override
     public void creer(Vehicule vehicule) throws DAOException {
         String query = "insert into " + table + " (" +
-                id + ", " +
                 immatriculation + ", " +
                 marque + ", " +
                 modele + ", " +
                 date_mise_circulation + ", " +
-                kilometrage + ") values (?,?,?,?,?,?)";
+                kilometrage + ") values (?,?,?,?,?)";
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
-            ps.setInt(1, vehicule.getId());
-            ps.setString(2, vehicule.getImmatriculation());
-            ps.setString(3, vehicule.getMarque());
-            ps.setString(4, vehicule.getModele());
-            ps.setDate(5, Date.valueOf(vehicule.getDateMiseEnCirculation()));
-            ps.setInt(6, vehicule.getKilometrage());
+            ps.setString(1, vehicule.getImmatriculation());
+            ps.setString(2, vehicule.getMarque());
+            ps.setString(3, vehicule.getModele());
+            ps.setDate(4, Date.valueOf(vehicule.getDateMiseEnCirculation()));
+            ps.setInt(5, vehicule.getKilometrage());
 
-            ps.executeQuery();
+            ps.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException("Erreur lors de la création du véhicule");
+            throw new DAOException("Erreur lors de la création du véhicule : " + e.getMessage());
         }
     }
 
@@ -57,21 +54,12 @@ public class VehiculeDAOImpl implements VehiculeDAO {
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
             ps.setInt(1, id);
 
-            ResultSet rs = ps.executeQuery();
-            Vehicule v = null;
-
-            while (rs.next()) {
-                int code = rs.getInt(this.id);
-                String immatriculation = rs.getString(this.immatriculation);
-                String marque = rs.getString(this.marque);
-                String modele = rs.getString(this.modele);
-                LocalDate date_mise_circulation = rs.getDate(this.date_mise_circulation).toLocalDate();
-                int kilometrage = rs.getInt(this.kilometrage);
-
-                v = new Vehicule(code, immatriculation, marque, modele, date_mise_circulation, kilometrage);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return construireVehicule(rs);
+                }
+                return null;
             }
-
-            return v;
         } catch (SQLException e) {
             throw new DAOException("Erreur lors de la recherche du véhicule");
         }
@@ -86,21 +74,12 @@ public class VehiculeDAOImpl implements VehiculeDAO {
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
             ps.setString(1, immat);
 
-            ResultSet rs = ps.executeQuery();
-            Vehicule v = null;
-
-            while (rs.next()) {
-                int code = rs.getInt(this.id);
-                String immatriculation = rs.getString(this.immatriculation);
-                String marque = rs.getString(this.marque);
-                String modele = rs.getString(this.modele);
-                LocalDate date_mise_circulation = rs.getDate(this.date_mise_circulation).toLocalDate();
-                int kilometrage = rs.getInt(this.kilometrage);
-
-                v = new Vehicule(code, immatriculation, marque, modele, date_mise_circulation, kilometrage);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return construireVehicule(rs);
+                }
+                return null;
             }
-
-            return v;
         } catch (SQLException e) {
             throw new DAOException("Erreur lors de la recherche du véhicule");
         }
@@ -118,15 +97,7 @@ public class VehiculeDAOImpl implements VehiculeDAO {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                int id = rs.getInt(this.id);
-                String immatriculation = rs.getString(this.immatriculation);
-                String marque = rs.getString(this.marque);
-                String modele = rs.getString(this.modele);
-                LocalDate date_mise_circulation = rs.getDate(this.date_mise_circulation).toLocalDate();
-                int kilometrage = rs.getInt(this.kilometrage);
-
-                Vehicule v = new Vehicule(id, immatriculation, marque, modele, date_mise_circulation, kilometrage);
-                vehicules.add(v);
+                vehicules.add(construireVehicule(rs));
             }
 
         } catch (SQLException e) {
@@ -145,15 +116,16 @@ public class VehiculeDAOImpl implements VehiculeDAO {
                 + immatriculation + "=?,"
                 + marque + "=?,"
                 + modele + "=?,"
-                + date_mise_circulation + "=?"
+                + date_mise_circulation + "=?,"
+                + kilometrage + "=?"
                 + " WHERE " + id + "=?";
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
             ps.setString(1, vehicule.getImmatriculation());
             ps.setString(2, vehicule.getMarque());
             ps.setString(3, vehicule.getModele());
             ps.setDate(4, Date.valueOf(vehicule.getDateMiseEnCirculation()));
-
-            ps.setInt(5, vehicule.getId());
+            ps.setInt(5, vehicule.getKilometrage());
+            ps.setInt(6, vehicule.getId());
 
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -169,9 +141,20 @@ public class VehiculeDAOImpl implements VehiculeDAO {
         String query = "delete from " + table + " where " + this.id + " =?";
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
             ps.setInt(1, id);
-            ps.executeQuery();
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException("Erreur lors de la suppression du véhicule");
         }
+    }
+
+    private Vehicule construireVehicule(ResultSet rs) throws SQLException {
+        return new Vehicule(
+                rs.getInt(id),
+                rs.getString(immatriculation),
+                rs.getString(marque),
+                rs.getString(modele),
+                rs.getDate(date_mise_circulation).toLocalDate(),
+                rs.getInt(kilometrage)
+        );
     }
 }
