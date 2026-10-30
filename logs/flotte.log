@@ -1,8 +1,0 @@
-[INFO ] 2026-10-30 12:14:34.345 [main] VehiculeService - Début de la récupération de la flotte depuis la base de données
-[INFO ] 2026-10-30 12:16:33.669 [main] VehiculeService - Début de la récupération de la flotte depuis la base de données
-[INFO ] 2026-10-30 12:17:19.107 [main] VehiculeService - Début de la récupération de la flotte depuis la base de données
-[ERROR] 2026-10-30 12:17:19.111 [main] VehiculeService - Impossible de trouver dao.properties
-[INFO ] 2026-10-30 12:23:38.707 [main] VehiculeService - Début de la récupération de la flotte depuis la base de données
-[INFO ] 2026-10-30 12:23:38.905 [main] VehiculeService - Flotte initialisée avec succès
-[INFO ] 2026-10-30 13:49:06.488 [main] VehiculeService - Début de la récupération de la flotte depuis la base de données
-[INFO ] 2026-10-30 13:49:06.745 [main] VehiculeService - Flotte initialisée avec succès
