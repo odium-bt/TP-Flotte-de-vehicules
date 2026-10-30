@@ -39,11 +39,13 @@ public interface ReservationDAO {
     boolean estEnDeplacement(int idReservation);
 
     /**
-     * Modifie les réservations d'un salarié.
+     * Modifie une réservation.
      *
-     * @param reservations Les réservations du salarié
+     * @param idReservation Id de la réservation
+     * @param dateDepart    Date de départ
+     * @param vehicule      Véhicule
      */
-    void modifier(Reservations<Salarie, Timestamp, Vehicule> reservations);
+    void modifier(int idReservation, Timestamp dateDepart, Vehicule vehicule);
 
     /**
      * Clotûre une réservation.

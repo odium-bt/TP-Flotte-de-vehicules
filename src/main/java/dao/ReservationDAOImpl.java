@@ -43,11 +43,12 @@ public class ReservationDAOImpl implements ReservationDAO {
                 ps.setTimestamp(3, entry.getKey());
                 // Les dates et kilomètres de retour sont null avant la clotûre
 
-                ps.executeQuery();
+                ps.addBatch();
             }
 
+            ps.executeBatch();
         } catch (SQLException e) {
-            throw new DAOException("Erreur lors de la création de la réservation");
+            throw new DAOException("Erreur lors de la création de la réservation : " + e.getMessage());
         }
     }
 
@@ -85,7 +86,7 @@ public class ReservationDAOImpl implements ReservationDAO {
             }
 
         } catch (SQLException e) {
-            throw new DAOException("Erreur lors de la recherche de la réservation");
+            throw new DAOException("Erreur lors de la recherche de la réservation : " + e.getMessage());
         }
     }
 
@@ -114,7 +115,7 @@ public class ReservationDAOImpl implements ReservationDAO {
             }
 
         } catch (SQLException e) {
-            throw new DAOException("Erreur lors de la recherche des réservations");
+            throw new DAOException("Erreur lors de la recherche des réservations : " + e.getMessage());
         }
 
         return liste;
@@ -137,7 +138,7 @@ public class ReservationDAOImpl implements ReservationDAO {
                 return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            throw new DAOException("Erreur lors de la vérification du déplacement du véhicule");
+            throw new DAOException("Erreur lors de la vérification du déplacement du véhicule : " + e.getMessage());
         }
     }
 
@@ -145,26 +146,20 @@ public class ReservationDAOImpl implements ReservationDAO {
      * {@inheritDoc}
      */
     @Override
-    public void modifier(Reservations<Salarie, Timestamp, Vehicule> reservations) throws DAOException {
+    public void modifier(int idReservation, Timestamp dateDepart, Vehicule vehicule) throws DAOException {
         String query = "UPDATE " + table + " SET "
-                + matricule + " = ?, "
                 + idVehicule + " = ?, "
-                + dateDepart + " = ?"
-                + " WHERE " + id + " = ?";
+                + dateDepart + " = ? "
+                + "WHERE " + id + " = ?";
 
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
+            ps.setInt(1, vehicule.getId());
+            ps.setTimestamp(2, dateDepart);
+            ps.setInt(3, idReservation);
 
-            for (Map.Entry<Timestamp, Vehicule> entry : reservations.getListeReservations().entrySet()) {
-
-                ps.setString(1, reservations.getSalarie().getMatricule());
-                ps.setInt(2, entry.getValue().getId());
-                ps.setTimestamp(3, entry.getKey());
-
-                ps.executeUpdate();
-            }
-
+            ps.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException("Erreur lors de la modification de la réservation");
+            throw new DAOException("Erreur lors de la modification de la réservation : " + e.getMessage());
         }
     }
 
@@ -172,8 +167,26 @@ public class ReservationDAOImpl implements ReservationDAO {
      * {@inheritDoc}
      */
     @Override
-    public void cloturer(int idReservation, Timestamp timestamp, int kmRetour) {
-        // TODO
+    public void cloturer(int idReservation, Timestamp timestamp, int kmRetour) throws DAOException {
+        String query = "UPDATE " + table + " SET "
+                + dateRetour + " = ?, "
+                + this.kmRetour + " = ? "
+                + "WHERE " + id + " = ? "
+                + "AND " + dateRetour + " IS NULL";
+
+        try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
+            ps.setTimestamp(1, timestamp);
+            ps.setInt(2, kmRetour);
+            ps.setInt(3, idReservation);
+
+            int lignesModifiees = ps.executeUpdate();
+
+            if (lignesModifiees == 0) {
+                throw new DAOException("Réservation introuvable ou déjà clôturée");
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Erreur lors de la clôture de la réservation : " + e.getMessage());
+        }
     }
 
     /**
@@ -181,19 +194,15 @@ public class ReservationDAOImpl implements ReservationDAO {
      */
     @Override
     public void supprimer(int id) throws DAOException {
-        // TODO Corriger
         String query = "DELETE FROM " + table
                 + " WHERE " + this.id + " = ?";
 
-        try (PreparedStatement ps =
-                     DAOFactory.getInstance().getConnection()
-                             .prepareStatement(query)) {
-
+        try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
             ps.setInt(1, id);
-            ps.executeUpdate();
 
+            ps.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException("Erreur lors de la suppression de la réservation");
+            throw new DAOException("Erreur lors de la suppression de la réservation : " + e.getMessage());
         }
     }
 }

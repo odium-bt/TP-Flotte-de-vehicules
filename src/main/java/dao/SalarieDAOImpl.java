@@ -29,7 +29,7 @@ public class SalarieDAOImpl implements SalarieDAO {
             ps.setString(2, salarie.getNom());
             ps.setString(3, salarie.getPrenom());
 
-            ps.executeQuery();
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException("Erreur lors de la création du salarié");
         }
@@ -44,18 +44,19 @@ public class SalarieDAOImpl implements SalarieDAO {
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
             ps.setString(1, matricule);
 
-            ResultSet rs = ps.executeQuery();
-            Salarie s = null;
+            try (ResultSet rs = ps.executeQuery()) {
+                Salarie s = null;
 
-            while (rs.next()) {
-                String id = rs.getString(this.matricule);
-                String nom = rs.getString(this.nom);
-                String prenom = rs.getString(this.prenom);
+                while (rs.next()) {
+                    String id = rs.getString(this.matricule);
+                    String nom = rs.getString(this.nom);
+                    String prenom = rs.getString(this.prenom);
 
-                s = new Salarie(id, nom, prenom);
+                    s = new Salarie(id, nom, prenom);
+                }
+
+                return s;
             }
-
-            return s;
         } catch (SQLException e) {
             throw new DAOException("Erreur lors de la recherche du salarié");
         }
@@ -117,7 +118,7 @@ public class SalarieDAOImpl implements SalarieDAO {
         String query = "delete from " + table + " where " + this.matricule + " =?";
         try (PreparedStatement ps = DAOFactory.getInstance().getConnection().prepareStatement(query)) {
             ps.setString(1, matricule);
-            ps.executeQuery();
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException("Erreur lors de la suppression du salarié");
         }
