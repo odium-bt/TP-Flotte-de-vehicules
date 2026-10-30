@@ -15,11 +15,13 @@ import modeles.Vehicule;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class PdfService {
     private final Logger log = LogManager.getLogger(String.valueOf(PdfService.class));
@@ -36,8 +38,8 @@ public class PdfService {
         this.flotte = flotte;
     }
 
-    public void ecrireFlotteStatut() {
-        executor.submit(() -> {
+    public Future<File> ecrireFlotteStatut() {
+        return executor.submit(() -> {
             try {
                 // Gestionnaire de l'écriture dans le fichier pdf
                 PdfWriter writer = new PdfWriter(path);
@@ -112,9 +114,11 @@ public class PdfService {
                 doc.close();
 
                 log.info("Fichier \"{}\" écrit avec succès", path);
+
+                return new File(path);
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
-                log.trace(e.getStackTrace());
+                throw new RuntimeException(e);
             }
         });
     }

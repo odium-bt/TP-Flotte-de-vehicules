@@ -35,27 +35,8 @@ public class ReservationService {
     /**
      * Ajout d'un salarié.
      *
-     * @param matricule Le matricule
-     * @param nom       Le nom
-     * @param prenom    Le prénom
+     * @param salarie Le salarié
      */
-    public void ajouterSalarie(String matricule, String nom, String prenom) {
-        executor.submit(() -> {
-            log.info("Création d'un salarié");
-
-            Salarie salarie = new Salarie(matricule, prenom, nom);
-
-            try {
-                salarieDAO.creer(salarie);
-
-                log.info("Salarié créé");
-            } catch (DAOException e) {
-                log.error(e.getMessage(), e);
-                log.trace(e.getStackTrace());
-            }
-        });
-    }
-
     public void ajouterSalarie(Salarie salarie) {
         executor.submit(() -> {
             log.info("Création d'un salarié");
@@ -69,6 +50,15 @@ public class ReservationService {
                 log.trace(e.getStackTrace());
             }
         });
+    }
+
+    /**
+     * Enregistrement du départ du
+     * @param immatriculation
+     * @param matricule
+     */
+    public void enregistrerDepart(String immatriculation, String matricule) {
+        // TODO Zadig
     }
 
     /**
@@ -222,10 +212,6 @@ public class ReservationService {
         }
     }
 
-
-    public void enregistrerDepart(String immatriculation, String matricule) {
-        // TODO Zadig
-    }
 
     public Reservations<Salarie, Timestamp, Vehicule> historiqueSalarie(String matricule) {
         return null;
