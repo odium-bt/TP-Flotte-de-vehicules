@@ -15,6 +15,7 @@ public class AuthController {
     }
 
     public boolean connecter() {
+
         while (true) {
             String login = vue.saisieTexte("Login");
             String motDePasse = vue.saisieTexte("Mot de passe");

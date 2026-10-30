@@ -3,6 +3,9 @@ package modeles;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ */
 public class Flotte {
 
     private List<Vehicule> listeVehicules;

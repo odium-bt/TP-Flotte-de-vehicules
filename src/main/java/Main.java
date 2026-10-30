@@ -15,6 +15,7 @@ public class Main {
 
         VehiculeService vehiculeService = new VehiculeService(
                 factory.getVehiculeDAO(), factory.getReservationDAO(), new Flotte());
+
         ReservationService reservationService = new ReservationService(
                 factory.getVehiculeDAO(), factory.getReservationDAO(), factory.getSalarieDAO());
 
