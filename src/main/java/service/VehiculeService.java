@@ -48,7 +48,7 @@ public class VehiculeService {
 
                 log.info("Véhicule créé");
             } catch (DAOException | RegleGestionException e) {
-                log.error(e.getMessage());
+                log.error(e.getMessage(), e);
             }
         });
     }
@@ -63,28 +63,22 @@ public class VehiculeService {
             this.flotte.setListeVehicules(vehiculeDAO.lister());
             log.info("Flotte initialisée avec succès");
         } catch (DAOException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
     }
 
     /**
-     * Récupère chaque véhicule de la flotte sous forme de string.
+     * Récupère chaque véhicule de la flotte.
      *
-     * @return Retourne une {@code List<String>} contenant chaque véhicule sous forme de string
+     * @return Retourne une {@code List<String>} contenant chaque véhicule
      */
-    public List<String> afficherFlotte() {
+    public List<Vehicule> afficherFlotte() {
         log.info("Affichage de la flotte");
 
-        List<String> res = new ArrayList<>();
-
         try {
-            for (Vehicule v : flotte.getListeVehicules()) {
-                res.add(v.toString());
-            }
-
-            return res;
+            return new ArrayList<>(flotte.getListeVehicules());
         } catch (DAOException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
             return null;
         }
     }
@@ -96,7 +90,7 @@ public class VehiculeService {
             log.info("Véhicule trouvé avec succès");
             return v;
         } catch (DAOException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
             return null;
         }
     }
@@ -126,17 +120,47 @@ public class VehiculeService {
 
                 log.info("Véhicule modifié");
             } catch (DAOException | RegleGestionException e) {
-                log.error(e.getMessage());
+                log.error(e.getMessage(), e);
+            }
+        });
+    }
+
+
+    /**
+     * Tente de supprimer un véhicule par son immatriculation.
+     *
+     * @param immatriculation Immatriculation
+     */
+    public void retirerVehicule(String immatriculation) {
+        executor.submit(() -> {
+            log.info("Tentative de suppression du véhicule {}", immatriculation);
+
+            try {
+                Vehicule v = vehiculeDAO.trouverParImmatriculation(immatriculation);
+
+                if (v == null) {
+                    throw new RegleGestionException("Ce véhicule n'existe pas");
+                }
+
+                if (reservationDAO.estEnDeplacement(v.getId())) {
+                    throw new RegleGestionException("Ce véhicule est actuellement en déplacement");
+                }
+
+                vehiculeDAO.supprimer(v.getId());
+
+                log.info("Véhicule {} supprimé avec succès", immatriculation);
+            } catch (DAOException | RegleGestionException e) {
+                log.error(e.getMessage(), e);
             }
         });
     }
 
     /**
-     * Tente de supprimer un véhicule s'il existe et n'est pas en déplacement.
+     * Tente de supprimer un véhicule par son ID.
      *
      * @param id Id du véhicule
      */
-    public void retirerVehicule(int id) {
+    public void retirerVehiculeParId(int id) {
         executor.submit(() -> {
             log.info("Tentative de suppression du véhicule {}", id);
 
@@ -153,14 +177,15 @@ public class VehiculeService {
 
                 log.info("Véhicule {} supprimé avec succès", id);
             } catch (DAOException | RegleGestionException e) {
-                log.error(e.getMessage());
+                log.error(e.getMessage(), e);
             }
         });
     }
 
-    public void trierMarque() {
+    public List<Vehicule> trierMarque() {
         Comparator<Vehicule> parMarqueModele = Comparator.comparing(Vehicule::getMarque)
                 .thenComparing(Vehicule::getModele);
+        return null;
     }
 
     public void trierModele() {
@@ -168,15 +193,17 @@ public class VehiculeService {
                 .thenComparing(Vehicule::getMarque);
     }
 
-    public void trierDate() {
+    public List<Vehicule> trierDate() {
         Comparator<Vehicule> parDate =
                 Comparator.comparing(Vehicule::getDateMiseEnCirculation);
+        return null;
     }
 
-    public void trierKilometrageDecroissant() {
+    public List<Vehicule> trierKilometrageDecroissant() {
         Comparator<Vehicule> parKmDecroissant =
                 Comparator.comparingInt(Vehicule::getKilometrage)
                         .reversed();
+        return null;
     }
 
     /**

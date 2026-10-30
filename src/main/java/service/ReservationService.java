@@ -14,10 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import modeles.Salarie;
 import modeles.Reservations;
-import java.util.List;
-import java.util.ArrayList;
 
 
 public class ReservationService {
@@ -53,7 +50,23 @@ public class ReservationService {
 
                 log.info("Salarié créé");
             } catch (DAOException e) {
-                log.error(e.getMessage());
+                log.error(e.getMessage(), e);
+                log.trace(e.getStackTrace());
+            }
+        });
+    }
+
+    public void ajouterSalarie(Salarie salarie) {
+        executor.submit(() -> {
+            log.info("Création d'un salarié");
+
+            try {
+                salarieDAO.creer(salarie);
+
+                log.info("Salarié créé");
+            } catch (DAOException e) {
+                log.error(e.getMessage(), e);
+                log.trace(e.getStackTrace());
             }
         });
     }
@@ -73,7 +86,8 @@ public class ReservationService {
                 res.add(s.toString());
             }
         } catch (DAOException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
+            log.trace(e.getStackTrace());
         }
 
         return res;
@@ -91,7 +105,8 @@ public class ReservationService {
         try {
             return salarieDAO.trouverParMatricule(matricule);
         } catch (DAOException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
+            log.trace(e.getStackTrace());
         }
 
         return null;
@@ -114,7 +129,8 @@ public class ReservationService {
      * Créé une nouvelle réservation.
      */
     public void creerReservation() {
-        executor.submit(() -> {// TODO new Reservation();
+        executor.submit(() -> {// TODO new Reservation(); (attendre classe Reservation)
+            log.info("Création d'une nouvelle réservation");
         });
     }
 
@@ -127,6 +143,7 @@ public class ReservationService {
         // TODO Afficher réservations
         return List.of();
     }
+
 
     /**
      * Enregistre le retour d'un véhicule et la clotûre d'une réservation.
@@ -159,7 +176,8 @@ public class ReservationService {
 
                 log.info("Retour de {} à {} km", immatriculation, kmRetour);
             } catch (DAOException | RegleGestionException e) {
-                log.error(e.getMessage());
+                log.error(e.getMessage(), e);
+                log.trace(e.getStackTrace());
             }
         });
     }
@@ -182,7 +200,8 @@ public class ReservationService {
 
                 log.info("Réservation supprimée avec succès");
             } catch (DAOException | RegleGestionException e) {
-                log.error(e.getMessage());
+                log.error(e.getMessage(), e);
+                log.trace(e.getStackTrace());
             }
         });
     }
@@ -203,9 +222,6 @@ public class ReservationService {
         }
     }
 
-    public void ajouterSalarie(Salarie salarie) {
-        // TODO Zadig
-    }
 
     public void enregistrerDepart(String immatriculation, String matricule) {
         // TODO Zadig
