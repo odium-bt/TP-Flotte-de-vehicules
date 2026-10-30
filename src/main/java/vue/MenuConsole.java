@@ -38,7 +38,6 @@ public class MenuConsole {
         System.out.println("13. Lire un fichier exporté");
         System.out.println("0. Quitter");
         System.out.println("===============================================");
-        System.out.print("Votre choix : ");
 
         return saisieEntier("Votre choix");
     }
