@@ -9,10 +9,8 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,7 +38,10 @@ public class MailService {
                 throw new FileNotFoundException("Fichier introuvable : " + mailPropertiesPath);
             }
 
-            properties.load(input);
+            // Utilisation d'un lecteur UTF-8 pour garder les accents
+            try (Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
+                properties.load(reader);
+            }
         } catch (IOException e) {
             log.error("Erreur lors de la lecture de mail.properties", e);
         }
