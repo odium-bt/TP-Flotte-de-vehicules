@@ -53,9 +53,10 @@ public class ReservationService {
     }
 
     /**
-     * Enregistrement du départ du
-     * @param immatriculation
-     * @param matricule
+     * Enregistrement du départ de la réservation
+     *
+     * @param immatriculation Immatriculation
+     * @param matricule       Matricule
      */
     public void enregistrerDepart(String immatriculation, String matricule) {
         // TODO Zadig
