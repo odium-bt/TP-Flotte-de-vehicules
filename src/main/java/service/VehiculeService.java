@@ -97,7 +97,11 @@ public class VehiculeService {
         log.info("Recherche du véhicule immatriculé {}", immatriculation);
         try {
             Vehicule v = vehiculeDAO.trouverParImmatriculation(immatriculation);
-            log.info("Véhicule trouvé avec succès");
+            if (v == null) {
+                log.info("Aucun véhicule trouvé pour cette immatriculation.");
+            } else {
+                log.info("Véhicule trouvé");
+            }
             return v;
         } catch (DAOException e) {
             log.error(e.getMessage(), e);
