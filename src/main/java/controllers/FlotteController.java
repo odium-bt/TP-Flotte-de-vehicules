@@ -1,5 +1,6 @@
 package controllers;
 
+import dao.DAOException;
 import vue.MenuConsole;
 import modeles.Vehicule;
 import service.RegleGestionException;
@@ -22,7 +23,6 @@ public class FlotteController {
     }
 
     public void ajouterVehicule() {
-
         String immatriculation = vue.saisieTexte("Immatriculation (AA-123-AA)").toUpperCase();
         String marque = vue.saisieTexte("Marque : ");
         String modele = vue.saisieTexte("Modèle : ");
@@ -30,12 +30,18 @@ public class FlotteController {
         int kilometrage = vue.saisieEntier("Kilométrage : ");
 
         try {
-
             LocalDate dateMiseEnCirculation = LocalDate.parse(dateSaisie, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            vehiculeEnService.ajouterVehicule(immatriculation, marque, modele, dateMiseEnCirculation, kilometrage);
-            vue.afficherSucces("Véhicule ajoute!");
 
-        } catch (RegleGestionException | IllegalArgumentException | DateTimeParseException e) {
+            new Thread(() -> {
+                try {
+                    vehiculeEnService.ajouterVehicule(immatriculation, marque, modele, dateMiseEnCirculation, kilometrage);
+
+                    vue.afficherSucces("Véhicule ajouté!");
+                } catch (DAOException e) {
+                    vue.afficherRefus(e.getMessage());
+                }
+            }).start();
+        } catch (DateTimeParseException e) {
             vue.afficherRefus(e.getMessage());
         }
     }

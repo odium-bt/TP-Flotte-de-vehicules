@@ -33,24 +33,23 @@ public class VehiculeService {
         this.initialiserFlotte();
     }
 
-    public void ajouterVehicule(String immatriculation, String marque, String modele, LocalDate dateMiseEnCirculation, int kilometrage) {
-        executor.submit(() -> {
-            log.info("Début de l'ajout d'un véhicule...");
+    public void ajouterVehicule(String immatriculation, String marque, String modele, LocalDate dateMiseEnCirculation, int kilometrage) throws DAOException {
+        log.info("Début de l'ajout d'un véhicule...");
 
-            Vehicule vehicule = new Vehicule(immatriculation, marque, modele, dateMiseEnCirculation, kilometrage);
+        Vehicule vehicule = new Vehicule(immatriculation, marque, modele, dateMiseEnCirculation, kilometrage);
 
-            try {
-                if (vehiculeDAO.trouverParImmatriculation(immatriculation) != null) {
-                    throw new RegleGestionException("Un véhicule avec cette immatriculation existe déjà !");
-                }
-
-                vehiculeDAO.creer(vehicule);
-
-                log.info("Le véhicule immatriculé {} a été ajouté !", immatriculation);
-            } catch (DAOException e) {
-                log.error(e.getMessage(), e);
+        try {
+            if (vehiculeDAO.trouverParImmatriculation(immatriculation) != null) {
+                throw new RegleGestionException("Un véhicule avec cette immatriculation existe déjà !");
             }
-        });
+
+            vehiculeDAO.creer(vehicule);
+
+            log.info("Le véhicule immatriculé {} a été ajouté !", immatriculation);
+        } catch (DAOException e) {
+            log.error(e.getMessage(), e);
+            throw e;
+        }
     }
 
     /**
